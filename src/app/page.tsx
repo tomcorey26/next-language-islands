@@ -1,101 +1,140 @@
-import Image from "next/image";
+'use client';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+
+interface FlashCard {
+  id: number;
+  sentence: string;
+  translation: string;
+  audioUrl: string;
+  isFavorite: boolean;
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [flashCards, setFlashCards] = useState<FlashCard[]>([]);
+  const [newSentence, setNewSentence] = useState('');
+  const [newTranslation, setNewTranslation] = useState('');
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const handleAddFlashCard = () => {
+    if (newSentence && newTranslation) {
+      const newCard: FlashCard = {
+        id: Date.now(),
+        sentence: newSentence,
+        translation: newTranslation,
+        audioUrl: '', // You'll need to implement audio upload/generation
+        isFavorite: false,
+      };
+      setFlashCards([...flashCards, newCard]);
+      setNewSentence('');
+      setNewTranslation('');
+    }
+  };
+
+  const handleToggleFavorite = (id: number) => {
+    setFlashCards(
+      flashCards.map((card) =>
+        card.id === id ? { ...card, isFavorite: !card.isFavorite } : card
+      )
+    );
+  };
+
+  const displayedFlashCards = showFavoritesOnly
+    ? flashCards.filter((card) => card.isFavorite)
+    : flashCards;
+
+  return (
+    <div className="grid grid-rows-[auto_1fr_auto] min-h-screen p-8 gap-8 font-[family-name:var(--font-geist-sans)]">
+      <header>
+        <h1 className="text-2xl font-bold mb-4">Language Study App</h1>
+      </header>
+      <main className="flex flex-col gap-8">
+        <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Enter sentence"
+            value={newSentence}
+            onChange={(e) => setNewSentence(e.target.value)}
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            placeholder="Enter translation"
+            value={newTranslation}
+            onChange={(e) => setNewTranslation(e.target.value)}
+            className="border p-2 rounded"
+          />
+          <button
+            onClick={handleAddFlashCard}
+            className="bg-blue-500 text-white p-2 rounded"
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+            Add Flash Card
+          </button>
+        </div>
+        <div>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={showFavoritesOnly}
+              onChange={() => setShowFavoritesOnly(!showFavoritesOnly)}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            Show favorites only
+          </label>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {displayedFlashCards.map((card) => (
+            <FlashCard
+              key={card.id}
+              card={card}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          ))}
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      <footer className="text-center text-sm text-gray-500">
+        © 2024 Language Study App
       </footer>
+    </div>
+  );
+}
+
+function FlashCard({
+  card,
+  onToggleFavorite,
+}: {
+  card: FlashCard;
+  onToggleFavorite: (id: number) => void;
+}) {
+  const [showTranslation, setShowTranslation] = useState(false);
+
+  const handlePlayAudio = () => {
+    const audio = new Audio(card.audioUrl);
+    audio.play();
+  };
+
+  return (
+    <div className="border p-4 rounded shadow">
+      <p className="font-bold mb-2">{card.sentence}</p>
+      {showTranslation && (
+        <p className="text-gray-600 mb-2">{card.translation}</p>
+      )}
+      <div className="flex justify-between items-center">
+        <button
+          onClick={() => setShowTranslation(!showTranslation)}
+          className="text-blue-500"
+        >
+          {showTranslation ? 'Hide' : 'Show'} Translation
+        </button>
+        <button onClick={handlePlayAudio} className="text-green-500">
+          Play Audio
+        </button>
+        <button
+          onClick={() => onToggleFavorite(card.id)}
+          className={`text-yellow-500 ${card.isFavorite ? 'font-bold' : ''}`}
+        >
+          {card.isFavorite ? '★' : '☆'}
+        </button>
+      </div>
     </div>
   );
 }
