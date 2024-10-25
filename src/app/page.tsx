@@ -1,6 +1,5 @@
 'use client';
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface FlashCard {
   id: number;
@@ -11,6 +10,7 @@ interface FlashCard {
 
 export default function Home() {
   const [flashCards, setFlashCards] = useState<FlashCard[]>([]);
+  const [aiPrompt, setAiPrompt] = useState('');
   const [newSentence, setNewSentence] = useState('');
   const [newTranslation, setNewTranslation] = useState('');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
@@ -28,6 +28,10 @@ export default function Home() {
       setNewSentence('');
       setNewTranslation('');
     }
+  };
+
+  const handleGenerateFlashCards = () => {
+    console.log('Generating flash cards with prompt:', aiPrompt);
   };
 
   const handleToggleFavorite = (id: number) => {
@@ -69,6 +73,23 @@ export default function Home() {
       </header>
       <main className="flex flex-col gap-8">
         <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Have AI generate flash cards"
+            value={aiPrompt}
+            onChange={(e) => setAiPrompt(e.target.value)}
+            className={`border p-2 rounded ${
+              isDarkMode
+                ? 'bg-gray-800 text-white border-gray-700'
+                : 'bg-white text-gray-800 border-gray-300'
+            }`}
+          />
+          <button
+            onClick={handleGenerateFlashCards}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded transition duration-300"
+          >
+            Generate Flash Cards
+          </button>
           <input
             type="text"
             placeholder="Enter sentence"
