@@ -54,7 +54,7 @@ export default function Home() {
             isDarkMode ? 'text-indigo-400' : 'text-indigo-700'
           }`}
         >
-          Language Study App
+          Language Study
         </h1>
         <button
           onClick={() => setIsDarkMode(!isDarkMode)}
