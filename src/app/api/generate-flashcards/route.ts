@@ -6,5 +6,12 @@ export async function POST(request: Request) {
 
   const response = await chatGptService.generateFlashCards(prompt, language);
 
-  return NextResponse.json({ response });
+  if (!response) {
+    return NextResponse.json(
+      { error: 'No response from GPT' },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ flashcards: response.flashcards });
 }

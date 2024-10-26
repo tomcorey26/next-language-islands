@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { flashCardsApi } from '@/services/api/FlashCardsApi';
 
 interface FlashCard {
-  id: number;
+  id: string;
   sentence: string;
   translation: string;
   isFavorite: boolean;
@@ -23,7 +23,7 @@ export default function Home() {
   const handleAddFlashCard = () => {
     if (newSentence && newTranslation) {
       const newCard: FlashCard = {
-        id: Date.now(),
+        id: window.crypto.randomUUID(),
         sentence: newSentence,
         translation: newTranslation,
         isFavorite: false,
@@ -36,10 +36,17 @@ export default function Home() {
 
   const handleGenerateFlashCards = async () => {
     const res = await flashCardsApi.generateFlashCards(aiPrompt, language);
-    console.log('Response:', res);
+    const flashcards = res.flashcards.map<FlashCard>((fc) => ({
+      id: window.crypto.randomUUID(),
+      sentence: fc.sentence,
+      translation: fc.translation,
+      isFavorite: false,
+    }));
+
+    setFlashCards(flashcards);
   };
 
-  const handleToggleFavorite = (id: number) => {
+  const handleToggleFavorite = (id: string) => {
     setFlashCards(
       flashCards.map((card) =>
         card.id === id ? { ...card, isFavorite: !card.isFavorite } : card

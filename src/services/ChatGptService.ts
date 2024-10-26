@@ -7,6 +7,8 @@ const FlashCard = z.object({
   translation: z.string(),
 });
 
+const FlashCardArray = z.array(FlashCard);
+
 class ChatGptService {
   private _client: OpenAI;
 
@@ -24,11 +26,14 @@ class ChatGptService {
       messages: [
         {
           role: 'system',
-          content: `The user will provide a prompt of a situation, and you need to generate flashcards of useful sentences to study pertaining to the prompt in ${language}.`,
+          content: `The user will provide a prompt of a situation, and you need to generate flashcards of useful sentences to study pertaining to the prompt in ${language}. The sentence field is english, and the translation field is ${language}.`,
         },
         { role: 'user', content: prompt },
       ],
-      response_format: zodResponseFormat(FlashCard, 'flashcard'),
+      response_format: zodResponseFormat(
+        z.object({ flashcards: FlashCardArray }),
+        'flashcard'
+      ),
     });
 
     const flashcards = completion.choices[0].message.parsed;

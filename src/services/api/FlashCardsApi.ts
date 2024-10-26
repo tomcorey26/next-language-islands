@@ -6,7 +6,7 @@ class FlashCardsApi {
   async generateFlashCards(
     prompt: string,
     language: string
-  ): Promise<{ response: string }> {
+  ): Promise<{ flashcards: { sentence: string; translation: string }[] }> {
     return api.post('/generate-flashcards', { prompt, language });
   }
 }
