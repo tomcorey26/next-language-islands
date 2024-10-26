@@ -19,6 +19,7 @@ export default function Home() {
   const [newTranslation, setNewTranslation] = useState('');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAddFlashCard = () => {
     if (newSentence && newTranslation) {
@@ -35,6 +36,7 @@ export default function Home() {
   };
 
   const handleGenerateFlashCards = async () => {
+    setIsLoading(true);
     const res = await flashCardsApi.generateFlashCards(aiPrompt, language);
     const flashcards = res.flashcards.map<FlashCard>((fc) => ({
       id: window.crypto.randomUUID(),
@@ -44,6 +46,7 @@ export default function Home() {
     }));
 
     setFlashCards(flashcards);
+    setIsLoading(false);
   };
 
   const handleToggleFavorite = (id: string) => {
@@ -116,8 +119,9 @@ export default function Home() {
           <button
             onClick={handleGenerateFlashCards}
             className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded transition duration-300"
+            disabled={isLoading}
           >
-            Generate Flash Cards
+            {isLoading ? 'Generating...' : 'Generate Flash Cards'}
           </button>
           <input
             type="text"
@@ -190,7 +194,7 @@ function FlashCard({
   isDarkMode,
 }: {
   card: FlashCard;
-  onToggleFavorite: (id: number) => void;
+  onToggleFavorite: (id: string) => void;
   isDarkMode: boolean;
 }) {
   const [showTranslation, setShowTranslation] = useState(false);
