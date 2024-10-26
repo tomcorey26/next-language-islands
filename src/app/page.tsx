@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { flashCardsApi } from '@/services/api/FlashCardsApi';
 
 interface FlashCard {
   id: number;
@@ -31,22 +32,8 @@ export default function Home() {
   };
 
   const handleGenerateFlashCards = async () => {
-    console.log('Generating flash cards with prompt:', aiPrompt);
-    const response = await fetch('/api/generate-flashcards', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prompt: aiPrompt }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Response:', data.response);
-      // Handle the response data as needed (e.g., update state with new flashcards)
-    } else {
-      console.error('Error generating flash cards:', response.statusText);
-    }
+    const res = await flashCardsApi.generateFlashCards(aiPrompt);
+    console.log('Response:', res);
   };
 
   const handleToggleFavorite = (id: number) => {
