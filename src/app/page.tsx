@@ -13,6 +13,9 @@ export default function Home() {
   const [flashCards, setFlashCards] = useState<FlashCard[]>([]);
   const [aiPrompt, setAiPrompt] = useState('');
   const [newSentence, setNewSentence] = useState('');
+  const [language, setLanguage] = useState<'spanish' | 'french' | 'german'>(
+    'spanish'
+  );
   const [newTranslation, setNewTranslation] = useState('');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -32,7 +35,7 @@ export default function Home() {
   };
 
   const handleGenerateFlashCards = async () => {
-    const res = await flashCardsApi.generateFlashCards(aiPrompt);
+    const res = await flashCardsApi.generateFlashCards(aiPrompt, language);
     console.log('Response:', res);
   };
 
@@ -75,17 +78,34 @@ export default function Home() {
       </header>
       <main className="flex flex-col gap-8">
         <div className="flex flex-col gap-4">
-          <input
-            type="text"
-            placeholder="Have AI generate flash cards"
-            value={aiPrompt}
-            onChange={(e) => setAiPrompt(e.target.value)}
-            className={`border p-2 rounded ${
-              isDarkMode
-                ? 'bg-gray-800 text-white border-gray-700'
-                : 'bg-white text-gray-800 border-gray-300'
-            }`}
-          />
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Have AI generate flash cards"
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+              className={`flex-grow border p-2 rounded ${
+                isDarkMode
+                  ? 'bg-gray-800 text-white border-gray-700'
+                  : 'bg-white text-gray-800 border-gray-300'
+              }`}
+            />
+            <select
+              value={language}
+              onChange={(e) =>
+                setLanguage(e.target.value as 'spanish' | 'french' | 'german')
+              }
+              className={`border p-2 rounded ${
+                isDarkMode
+                  ? 'bg-gray-800 text-white border-gray-700'
+                  : 'bg-white text-gray-800 border-gray-300'
+              }`}
+            >
+              <option value="spanish">🇪🇸 Spanish</option>
+              <option value="french">🇫🇷 French</option>
+              <option value="german">🇩🇪 German</option>
+            </select>
+          </div>
           <button
             onClick={handleGenerateFlashCards}
             className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded transition duration-300"
